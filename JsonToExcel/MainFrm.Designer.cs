@@ -38,7 +38,7 @@
             this.txtContent = new System.Windows.Forms.TextBox();
             this.btnFile = new System.Windows.Forms.Button();
             this.btnPreview = new System.Windows.Forms.Button();
-            this.txtResult = new System.Windows.Forms.TextBox();
+            this.lstResult = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -60,7 +60,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.txtResult);
+            this.splitContainer1.Panel2.Controls.Add(this.lstResult);
             this.splitContainer1.Panel2MinSize = 500;
             this.splitContainer1.Size = new System.Drawing.Size(983, 612);
             this.splitContainer1.SplitterDistance = 399;
@@ -162,16 +162,16 @@
             this.btnPreview.UseVisualStyleBackColor = true;
             this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
             // 
-            // txtResult
+            // lstResult
             // 
-            this.txtResult.BackColor = System.Drawing.SystemColors.Control;
-            this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtResult.Location = new System.Drawing.Point(0, 0);
-            this.txtResult.Multiline = true;
-            this.txtResult.Name = "txtResult";
-            this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(580, 612);
-            this.txtResult.TabIndex = 0;
+            this.lstResult.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstResult.HideSelection = false;
+            this.lstResult.Location = new System.Drawing.Point(0, 0);
+            this.lstResult.Name = "lstResult";
+            this.lstResult.Size = new System.Drawing.Size(580, 612);
+            this.lstResult.TabIndex = 0;
+            this.lstResult.UseCompatibleStateImageBehavior = false;
+            this.lstResult.View = System.Windows.Forms.View.Details;
             // 
             // MainFrm
             // 
@@ -184,7 +184,6 @@
             this.Text = "Json转Excel";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -201,10 +200,10 @@
         private System.Windows.Forms.Button btnPreview;
         private System.Windows.Forms.TextBox txtJsonPath;
         private System.Windows.Forms.TextBox txtContent;
-        private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtRoot;
         private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.ListView lstResult;
     }
 }
 

@@ -19,7 +19,7 @@ namespace JsonToExcel
         {
             InitializeComponent();
             txtContent.MaxLength = int.MaxValue;
-            txtResult.MaxLength = int.MaxValue;
+            //lstResult.Groups.Add(new ListViewGroup("预览仅展示前50条"));
         }
 
         private List<string> Result;
@@ -41,10 +41,10 @@ namespace JsonToExcel
                 var paths = txtJsonPath.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.StartsWith("#"));
                 var arr = string.IsNullOrWhiteSpace(txtRoot.Text) ? JArray.Parse(content) : JObject.Parse(content).SelectToken(txtRoot.Text);
 
-                lines.Add("\r\n" + string.Join(",", paths.Select(x => x.Substring(x.LastIndexOf('.') + 1))));
+                lines.Add(string.Join(",", paths.Select(x => x.Substring(x.LastIndexOf('.') + 1))));
                 foreach (var jtoken in arr)
                 {
-                    var items = paths.Count() == 0 ? jtoken.Select(x => x.ToString(Formatting.None)) : paths.Select(x => jtoken.SelectToken(x).ToString(Formatting.None));
+                    var items = paths.Count() == 0 ? jtoken.Select(x => x?.Value<object>()) : paths.Select(x => jtoken.SelectToken(x)?.Value<object>());
                     var line = string.Join(",", items);
                     lines.Add(line);
                 }
@@ -54,12 +54,20 @@ namespace JsonToExcel
                 MessageBox.Show("请检查数据格式:" + ex.Message);
                 return;
             }
-
-            var prelines = lines.Take(40).Select(x => x.Replace(",", "\r\t")).ToList();
-            prelines.Insert(1, "-----------------------------------------------------------------------------------------");
-            txtResult.Text = "预览仅展示前40条:\r\n";
-            txtResult.Text += string.Join("\r\n", prelines);
+            
+            lstResult.GridLines = true;
+            lstResult.Columns.Clear();
+            lstResult.Items.Clear();
+            lines[0].Split(',').ToList().ForEach(x => lstResult.Columns.Add(new ColumnHeader() { Text = x, Width = 100 }));
             Result = lines;
+
+            foreach (var item in lines.Skip(1).Take(100))
+            {
+                var split = item.Split(',').ToList();
+                var lstItem = new ListViewItem(split[0]) { Name = split[0] }; //, Group = lstResult.Groups[0]
+                split.Skip(1).ToList().ForEach(x => lstItem.SubItems.Add(x));
+                lstResult.Items.Add(lstItem);
+            }
         }
 
         private void btnFile_Click(object sender, EventArgs e)
@@ -75,6 +83,12 @@ namespace JsonToExcel
 
         private void btnExport_Click(object sender, EventArgs e)
         {
+            if (Result == null || Result.Count == 0)
+            {
+                MessageBox.Show("请先点击预览");
+                return;
+            }
+
             var dialog = new SaveFileDialog();
             dialog.InitialDirectory = "C://";
             dialog.Filter = "表格文件|*.csv";
@@ -85,6 +99,11 @@ namespace JsonToExcel
                 return;
 
             File.WriteAllLines(dialog.FileName, Result.ToArray());
+            var ans = MessageBox.Show("是否打开以保存的文件?", "保存成功", MessageBoxButtons.YesNo);
+            if (ans == DialogResult.Yes)
+            {
+                System.Diagnostics.Process.Start("explorer.exe", dialog.FileName);
+            }
         }
     }
 }
